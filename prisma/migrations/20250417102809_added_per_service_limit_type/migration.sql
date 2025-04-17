@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "LimitType" ADD VALUE 'PER_SERVICE';

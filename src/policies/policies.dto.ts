@@ -70,12 +70,4 @@ export class ImportDto {
   @IsNumber()
   @ApiProperty()
   id: number;
-
-  @IsOptional()
-  @ApiProperty({ required: false })
-  policyNumber: string;
-
-  @IsOptional()
-  @ApiProperty({ required: false })
-  insuranceCardNumber: string;
 }

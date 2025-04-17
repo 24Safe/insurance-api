@@ -50,7 +50,23 @@ export class PolicyService {
    * @param params
    */
   public async import(params: ImportDto) {
-    return await this.prisma.policies.findUnique({
+    function transformCoverages(coverages) {
+      return coverages.map((coverage) => {
+        const transformed = {
+          ...coverage,
+          id: coverage.templateId ?? coverage.id,
+        };
+
+        delete transformed.templateId;
+
+        if (Array.isArray(coverage.children) && coverage.children.length > 0) {
+          transformed.children = transformCoverages(coverage.children);
+        }
+
+        return transformed;
+      });
+    }
+    const result = await this.prisma.policies.findUnique({
       where: {
         id: params.id,
       },
@@ -61,6 +77,7 @@ export class PolicyService {
         limit: true,
         contractorName: true,
         insuranceStart: true,
+        insuranceEnd: true,
         start: true,
         end: true,
         policyNumber: true,
@@ -95,5 +112,10 @@ export class PolicyService {
         },
       },
     });
+
+    return {
+      ...result,
+      coverages: transformCoverages(result.coverages),
+    };
   }
 }

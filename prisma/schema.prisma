@@ -43,6 +43,7 @@ enum LimitType {
   LIMIT
   NO_LIMIT
   NUMBER_OF_OCCURRENCES
+  PER_SERVICE
 }
 
 enum DocumentType {
@@ -78,6 +79,7 @@ model policies {
   name                String
   contractorName      String?       @map("contractor_name")
   insuranceStart      DateTime      @map("insurance_start") @db.Date
+  insuranceEnd        DateTime?     @map("insurance_end") @db.Date
   start               DateTime      @db.Date
   end                 DateTime      @db.Date
   policyNumber        String        @map("policy_number")
