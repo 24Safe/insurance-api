@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PolicyStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum PolicyType {
+  DZO
+  PZO
+  PNP
+}
+
+enum CaseServiceStatus {
+  PENDING // when received from pwa or created -> Pending
+  APPROVED // when approved by ??
+  SUBMITTED_TO_MEDIFIT // when subited to medifit -> Approved
+  REJECTED // when medifit or operator rejects -> Rejected
+  BOOKED // when we get date -> Completed
+  SERVICE_DELIVERED // when invoice received
+  DOCUMENTS_COMPLETED
+  LIQUIDATED
+  CLOSED
+  CLOSED_NO_SHOW
+  STORNO
+  CANCELED
+}
+
+enum LimitType {
+  LIMIT
+  NO_LIMIT
+  NUMBER_OF_OCCURRENCES
+}
+
+enum DocumentType {
+  INVOICE
+  MEDICAL_REPORT
+  MEDICAL_REFERRAL
+  OTHER
+  CUSTOMER_DOCUMENT
+  CONTRACT
+}
+
+model policyholders {
+  id                        Int        @id @default(autoincrement())
+  firstName                 String     @map("first_name")
+  lastName                  String     @map("last_name")
+  dateOfBirth               DateTime?  @map("date_of_birth") @db.Date
+  email                     String?
+  phoneNumber               String?    @map("phone_number")
+  street                    String?
+  city                      String?
+  zip                       String?
+  country                   String?
+  uniqueMasterCitizenNumber String     @map("unique_master_citizen_number")
+  passportNumber            String?    @map("passport_number")
+  gender                    Gender
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime
+  policies                  policies[]
+}
+
+model policies {
+  id                  Int           @id @default(autoincrement())
+  name                String
+  contractorName      String?       @map("contractor_name")
+  insuranceStart      DateTime      @map("insurance_start") @db.Date
+  start               DateTime      @db.Date
+  end                 DateTime      @db.Date
+  policyNumber        String        @map("policy_number")
+  insuranceCardNumber String?       @map("insurance_card_number")
+  type                PolicyType
+  limitType           LimitType     @map("limit_type")
+  limit               Int
+  limitUsage          Int           @map("limit_usage")
+  licensePlate        String?       @map("license_plate")
+  vinNumber           String?       @map("vin_number")
+  color               String?
+  vehicleMake         String?       @map("vehicle_make")
+  vehicleModel        String?       @map("vehicle_model")
+  year                Int?
+  policyholderId      Int           @map("policyholder_id")
+  policyholder        policyholders @relation(fields: [policyholderId], references: [id])
+  level               Int
+  status              PolicyStatus
+  coverages           coverages[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime
+}
+
+model coverages {
+  id            Int                @id @default(autoincrement())
+  name          String
+  limit         Int
+  limitType     LimitType          @map("limit_type")
+  limitUsage    Int                @map("limit_usage")
+  subLimit      Int                @map("sub_limit")
+  subLimitType  LimitType          @map("sub_limit_type")
+  subLimitUsage Int                @map("sub_limit_usage")
+  parentId      Int?
+  parent        coverages?         @relation("Parent", fields: [parentId], references: [id])
+  level         Int
+  note          String?
+  templateId    Int?
+  template      coverageTemplates? @relation(fields: [templateId], references: [id])
+  policyId      Int
+  policy        policies           @relation(fields: [policyId], references: [id])
+  children      coverages[]        @relation("Parent")
+  participation Int
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime
+}
+
+model coverageTemplates {
+  id                       Int                         @id @default(autoincrement())
+  name                     String
+  level                    Int
+  type                     PolicyType
+  note                     String?
+  coverages                coverages[]
+  createdAt                DateTime                    @default(now())
+  updatedAt                DateTime
+  coverageTemplatesService coverageTemplatesService[]
+  children                 coverageTemplateRelations[] @relation("ParentCoverageTemplateChildren")
+  parents                  coverageTemplateRelations[] @relation("ChildCoverageTemplateChildren")
+}
+
+model coverageTemplateRelations {
+  id       Int               @id @default(autoincrement())
+  parentId Int               @map("parent_id")
+  parent   coverageTemplates @relation("ParentCoverageTemplateChildren", fields: [parentId], references: [id])
+  childId  Int               @map("child_id")
+  child    coverageTemplates @relation("ChildCoverageTemplateChildren", fields: [childId], references: [id])
+
+  @@map("coverage_template_relations")
+}
+
+model coverageTemplatesService {
+  id                 Int               @id @default(autoincrement())
+  coverageTemplateId Int
+  coverageTemplate   coverageTemplates @relation(fields: [coverageTemplateId], references: [id])
+  serviceId          Int
+  service            services          @relation(fields: [serviceId], references: [id])
+}
+
+model services {
+  id                       Int                        @id @default(autoincrement())
+  name                     String
+  prices                   prices[]
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime
+  coverageTemplatesService coverageTemplatesService[]
+}
+
+model associates {
+  id                 Int                @id @default(autoincrement())
+  name               String
+  registrationNumber String             @map("registration_number")
+  taxId              String             @map("tax_id")
+  types              Json
+  email              String?
+  phone              String?
+  prices             prices[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime
+  networkAssociate   networkAssociate[]
+}
+
+model prices {
+  id          Int        @id @default(autoincrement())
+  serviceName String     @map("service_name")
+  serviceId   Int
+  service     services   @relation(fields: [serviceId], references: [id])
+  associateId Int
+  associate   associates @relation(fields: [associateId], references: [id])
+  price       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+}
+
+model networks {
+  id               Int                @id @default(autoincrement())
+  name             String
+  participation    Int
+  networkAssociate networkAssociate[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+}
+
+model networkAssociate {
+  id          Int        @id @default(autoincrement())
+  networkId   Int
+  network     networks   @relation(fields: [networkId], references: [id])
+  associateId Int
+  associate   associates @relation(fields: [associateId], references: [id])
+
+  @@map("network_associate")
+}
