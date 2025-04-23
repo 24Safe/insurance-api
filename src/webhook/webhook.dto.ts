@@ -144,11 +144,6 @@ export class StatusChangedDto {
   @IsString()
   @IsDefined()
   @ApiProperty()
-  policyId: string;
-
-  @IsString()
-  @IsDefined()
-  @ApiProperty()
   policyNumber: string;
 
   @IsString()

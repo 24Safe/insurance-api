@@ -14,6 +14,7 @@ export class WebhookController {
       Typically used by external services or internal systems to push status updates in real-time.`,
   })
   public async statusChanged(@Body() body: StatusChangedDto) {
+    console.log(body);
     return { message: 'Success' };
   }
 

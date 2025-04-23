@@ -218,4 +218,7 @@ export class ImportResponseDto {
 
   @ApiProperty({ type: [CoveragesDto] })
   coverages: CoveragesDto[];
+
+  @ApiProperty({ description: 'ISO 4217 currency code' })
+  currency: string;
 }
