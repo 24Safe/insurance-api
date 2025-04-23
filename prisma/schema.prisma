@@ -138,6 +138,8 @@ model coverageTemplates {
   coverageTemplatesService coverageTemplatesService[]
   children                 coverageTemplateRelations[] @relation("ParentCoverageTemplateChildren")
   parents                  coverageTemplateRelations[] @relation("ChildCoverageTemplateChildren")
+  coveragePrices           prices[]                    @relation("Coverage")
+  subCoveragePrices        prices[]                    @relation("SubCoverage")
 }
 
 model coverageTemplateRelations {
@@ -182,15 +184,21 @@ model associates {
 }
 
 model prices {
-  id          Int        @id @default(autoincrement())
-  serviceName String     @map("service_name")
-  serviceId   Int
-  service     services   @relation(fields: [serviceId], references: [id])
-  associateId Int
-  associate   associates @relation(fields: [associateId], references: [id])
-  price       Int
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  id            Int                @id @default(autoincrement())
+  serviceName   String             @map("service_name")
+  serviceId     Int
+  service       services           @relation(fields: [serviceId], references: [id])
+  associateId   Int
+  associate     associates         @relation(fields: [associateId], references: [id])
+  price         Int
+  discount      Int                @default(0)
+  coverageId    Int?
+  coverage      coverageTemplates? @relation("Coverage", fields: [coverageId], references: [id])
+  subCoverageId Int?
+  subCoverage   coverageTemplates? @relation("SubCoverage", fields: [subCoverageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
 model networks {
