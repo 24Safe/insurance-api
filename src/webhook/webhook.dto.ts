@@ -9,6 +9,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 import { FileSystemStoredFile, IsFile } from 'nestjs-form-data';
@@ -169,6 +170,16 @@ export class FileMetadataDto {
 }
 
 export class DocumentsUploadDto {
+  @IsString()
+  @IsDefined()
+  @ApiProperty()
+  caseId: string;
+
+  @IsString()
+  @IsDefined()
+  @ApiProperty()
+  caseServiceId: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FileMetadataDto)

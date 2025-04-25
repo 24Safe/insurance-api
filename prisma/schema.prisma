@@ -97,6 +97,7 @@ model policies {
   policyholderId      Int           @map("policyholder_id")
   policyholder        policyholders @relation(fields: [policyholderId], references: [id])
   level               Int
+  currency            String        @default("RSD")
   status              PolicyStatus
   coverages           coverages[]
   createdAt           DateTime      @default(now())
