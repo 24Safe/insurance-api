@@ -186,6 +186,11 @@ export class StatusChangedDto {
   @IsOptional()
   @ApiProperty()
   currency: string;
+
+  @IsDate()
+  @IsOptional()
+  @ApiProperty()
+  createdAt: Date;
 }
 
 export class FileMetadataDto {
