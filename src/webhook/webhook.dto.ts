@@ -63,7 +63,7 @@ export class StatusChangedDto {
   associateName: string;
 
   @IsString()
-  @IsDefined()
+  @IsOptional()
   @ApiProperty()
   associateId: string;
 
@@ -151,6 +151,41 @@ export class StatusChangedDto {
   @IsDefined()
   @ApiProperty()
   insuranceCardNumber: string;
+
+  @IsString()
+  @IsDefined()
+  @ApiProperty()
+  policyholderFirstName: string;
+
+  @IsString()
+  @IsDefined()
+  @ApiProperty()
+  policyholderLastName: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  policyholderNIN: string;
+
+  @IsDate()
+  @IsOptional()
+  @ApiProperty()
+  policyholderDateOfBirth: Date;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  city: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  country: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  currency: string;
 }
 
 export class FileMetadataDto {

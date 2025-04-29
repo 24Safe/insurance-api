@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { DocumentsUploadDto, StatusChangedDto } from './webhook.dto';
 import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 
@@ -7,6 +7,7 @@ import { FileSystemStoredFile, FormDataRequest } from 'nestjs-form-data';
 @Controller('webhook')
 export class WebhookController {
   @Post('status')
+  @ApiSecurity('api-key')
   @ApiOperation({
     summary: 'Receive status change notifications (webhook)',
     description: `This endpoint is designed to receive incoming webhook requests whenever a status change occurs in the system.
@@ -19,6 +20,7 @@ export class WebhookController {
   }
 
   @Post('documents')
+  @ApiSecurity('api-key')
   @ApiOperation({
     summary: 'Receive labeled documents (webhook)',
     description: `This endpoint receives multiple documents along with their associated labels.

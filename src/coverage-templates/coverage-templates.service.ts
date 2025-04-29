@@ -11,11 +11,13 @@ export class CoverageTemplatesService {
         id: true,
         name: true,
         level: true,
+        type: true,
         parents: {
           select: {
             parent: {
               select: {
                 id: true,
+                type: true,
                 name: true,
                 level: true,
               },

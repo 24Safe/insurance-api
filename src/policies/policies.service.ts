@@ -91,6 +91,25 @@ export class PolicyService {
         vehicleModel: true,
         year: true,
         status: true,
+        level: true,
+        currency: true,
+        policyholder: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            dateOfBirth: true,
+            email: true,
+            phoneNumber: true,
+            street: true,
+            city: true,
+            zip: true,
+            country: true,
+            uniqueMasterCitizenNumber: true,
+            passportNumber: true,
+            gender: true,
+          },
+        },
         coverages: {
           where: {
             level: 3,
