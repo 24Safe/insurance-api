@@ -41,6 +41,7 @@ export class PolicyService {
       lastName: policy.policyholder.lastName,
       dateOfBirth: policy.policyholder.dateOfBirth,
       contractorName: policy.contractorName,
+      uniqueMasterCitizenNumber: policy.policyholder.uniqueMasterCitizenNumber,
       start: policy.start,
       end: policy.end,
     }));

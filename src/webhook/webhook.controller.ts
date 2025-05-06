@@ -36,6 +36,7 @@ export class WebhookController {
   })
   @FormDataRequest({ storage: FileSystemStoredFile })
   public async documentsUpload(@Body() body: DocumentsUploadDto) {
+    console.log(body);
     return { message: 'Success' };
   }
 }
